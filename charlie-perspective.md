@@ -4,241 +4,222 @@
 ###Charlie's Perspective Talk
 <br /><br />
 
-
-
-
-
-
-###Does anyone think we're current?
-
-###agile?
-
-###Efficient?
-
-###Mature?
-
-<br /><br /><br /><br />
-Me either.
+Perspective: A mental view or outlook
 
 
 
 
 
 
-###So, How do we improve?
 
-- Change our culture
-- Raise the bar
-- Focus on hard problems
-
-
-
-
-
-
-###Our culture encourages
+###Are we being innovative?
 
 <br /><br />
 
-- doing 'the right thing'
+- What have we done to change the game?
+- Does Higher Ed look anything like it did 20 years ago?  Why?
+- Is Ellucian leading?
+
+<br /><br /><br />
+
+How can we be more innovative?
+
+
+
+
+
+
+### "Laurel Resting" Anti-Pattern
+
+- Was selected for inclusion in [Antipatterns](http://www.amazon.com/Antipatterns-Identification-Refactoring-Management-Engineering/dp/0849329949) book but pulled after company review (to avoid traceability using my name to company)
+
+- Good News:
+ - We are **no longer** laurel resting
+- Bad News:
+ - Our clients are still laurel resting
+ - We are not being disruptive, innovative
+
+
+
+
+
+
+###Being More Innovative
+
+<br />
+We need solutions that are disruptive and redefine Higher Ed
 
 <br />
 
-aka the 'MIT/Stanford Style of design'
+How?
+
+- "Just say no" & "Opinionated software"
+- "New Jersey Method" (aka 'worse is better')
+- Internet-Scale Architecture
+- Maturity
+- Disrupt, not evolve
+- More Recommendations
 
 
 
 
-####But why not
+
+
+
+### "Just say no" & "Opinionated software"
 
 <br /><br />
 
-- 'worse is better'
+Our customers are not innovative - so why do we follow them?
+_(This doesn't mean not to listen & understand!)_
 
 <br />
 
-aka the 'New Jersey Style of design'
-
-
-
-
-####Simplicity
-
-MIT:<br />
-Simplicity is important; more important in interfaces than implementation
+Our solutions should be opinionated - they should do something one way, and do it simply
+(or should we not lead?)
 
 <br />
 
-NJ:<br />
-Simplicity is important; more important in implmementation than interfaces.<br />
-"Simplicity is the most important consideration in a design"
-
-
-
-
-
-
-###Our culture encourages
-
-<br /><br />
-
-- 'feature richness'
-
-
-
-
-####But why not
-
-<br /><br />
-
-- 'less is more'
-
-
-
-
-
-
-###Our culture encourages
-
-<br /><br />
-
-- 'yes, we can add that feature'
-
-
-
-
-####But why not
-
-<br /><br />
-
-- 'opinionated software'
-- 'just say no'
-
-
-
-
-
-
-###Our culture encourages
-
-<br /><br />
-
-- an 'enterprisey' focus
-
-
-
-
-####But why not
-
-<br /><br />
+Start-ups tend to have
 
 - a 'narrow focus'
-- YAGNI
+- practice YAGNI
 
 
 
 
 
 
-###Our culture encourages
+### "New Jersey Method" (aka 'worse is better')
 
-<br /><br />
-
-- the 'boat anchor' anti-pattern
-
-
-
-
-####But why not
-
-<br /><br />
-
-- throw away bad tools, practices more quickly
-
-
-
-
-
-
-###Our culture encourages
-
-<br /><br />
-
-- slow adoption of tools, frameworks, etc.
-
-
-
-
-####But why not
-
-<br /><br />
-
-- aggressively try out new stuff
-
-
-
-
-
-
-
-
-
-###We debate the easy stuff
-
-- Git? Nope, we're using Subversion. TCS...
-- Markdown?  No, MSFT Word. Sharepoint.  Robohelp.
-- "It's ok you don't have automated tests..."
-- "Windows is an acceptable developer platform for JVM"
-- Project too slow? ...better add more folks!
-
-<br /><br />
-/YOU:  Wow Charlie, are you just going to vent?  Ugghhhh.
-
-
-
-
-###No... We have real problems to solve
-
-<br /><br />
-
-**And we are the ones to do it**
-
-<br /><br />
-I don't claim to have the answers... but<br />
-We need to follow modern best practices and emulate a start up culture<br />
-
-
-
-
-###How to mitigate our (growing) technical debt
-
-- A broader Technical Currency initiative?
-- Evolve organization into web development organization?
-- Introduce newer technologies?
- - Angular? Node.js or Vert.x? Mongo or Redis? Hadoop? Pig? AWS? OAuth?
- - Budget time for developers to learn and share?
- - Adjust some focus away from legacy ERP evolution? (to apply technologies initially on greenfield projects)
-
-
-
-
-###How to improve quality
-<br />
-We need to institutionalize more discipline
+MIT Style (aka 'the right thing') is our current model
 
 <br />
 
-- Code reviews?
-- Being test focused?
- - Employ Behavior Driven Development (BDD)?
- - Consolidate Continuous Integration? (CI as a service)?
-- Use a common CLI (bash/zsh)?
-- Use Git (even for 1 day personal exercises)?
-- 'Ruthless' refactoring?
-- Earlier focus on performance?
+"Simplicity is the most important consideration in a design"<br />
+_Simplicity of implementation is more important than interface_
+
+<br />
+
+It is slightly better to be simple than 'correct'
+
+<br />
+
+It is better to drop those parts of the design that deal with less common circumstances than to introduce either complexity or inconsistency
+
+<br />
+
+Completeness can be sacrificed in favor of any other quality
 
 
 
 
-###How to improve productivity and time-to-market
 
+
+###Internet-Scale Architecture
+
+<br />
+
+'Client applications' and scalable, RESTful services
+
+<br />
+
+Example Technologies
+
+- HTML 5 & 'modern browsers', REST
+- 'MEAN' Stack
+ - MongoDB, Express.js, Angular.js, Node.js
+- Vert.x
+- NoSQL (Mongo, Redis)
+- Big Data & 'intelligence'
+ - Hadoop, Pig, Lucene, recommendations, categorization...
+- AWS, Azure
+
+
+
+
+
+
+### Maturity
+
+<br />
+
+Late 1990s: Developers -> XP practices but mgmt not agile
+Now: Mgmt -> Scrum/Kanban, developers less disciplined
+
+<br />
+
+- We still have teams that are not test focused
+ - well over 1/2 of all code written should be tests
+- Developers don't practice DRY, don't refactor
+- Some don't even use Git, some only use IDEs
+- Some still use Windows outside of .Net projects
+- We debate 'easy' questions
+
+<br />
+
+If it is not an open source / start-up best practice, it is **WRONG**. Period.<br />
+
+
+
+
+
+
+### Disrupt, not evolve
+
+<br />
+
+- Why do Universities think student data is theirs?
+
+- Why can't students authenticate via Facebook?
+
+- Why can't they 'like' something in Banner?
+
+- Why isn't transfer articulation instant?
+
+- Why can't a student build a schedule, taking courses from several universities?
+
+- Why \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ ?
+
+
+
+
+
+
+### Recommendations
+
+- If what you are doing does not **directly** contribute to the release of source code -- **STOP DOING IT** <br />
+ - Exception: Allocate time for developers to learn and use new technologies
+
+ - Adopt GitHub Enterprise in-house for all projects except Banner 8
+   - Encourage developers to fork any repo, issue pull requests
+
+ - Assess development of 'CI as a Service' ala Travis CI
+
+ - Open Source as many 'core architecture' framework components as possible
+
+
+
+
+### Recommendations  continued... (2)
+
+- Mandate Behavior Driven Development (BDD)
+ - Automate QA testing
+
+- Move focus away from legacy ERP "evolution"
+ - apply new technologies on greenfield projects
+ - innovate vs. evolve
+
+- Require all project repos to include markdown documentation
+- Limit formal documentation / models to those that will be maintained
+
+
+
+
+### Recommendations continued... (3)
+
+- Stop silly debates
+ - again, if it's not an open source / start-up best practice, it's **wrong**
+ - any project (except Banner 8) not using Git by now should probably be cancelled
+ - any project with less than 50% of code residing in tests should probably be cancelled
+ - any project without active CI should probably be cancelled
