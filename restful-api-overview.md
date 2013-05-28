@@ -70,16 +70,16 @@ Delegates to service based on naming conventions
 
 - may explicitly configure to override
 ```http
-        /course-sections/2351  -->  CourseSectionService
+    /course-sections/2351  -->  CourseSectionService
 ```
 - Establishes a contract for services
 ```groovy
-def list( def service, Map params )
-def count( def service, Map params )
-def show( def service, Map params )
-def create( def service, Map content, Map params )
-def update( def service, def id, Map content, Map params )
-void delete( def service, def id, Map content, Map params )
+def list(service, Map params)
+def count(service, Map params)
+def show(service, Map params)
+def create(service, Map content, Map params)
+def update(service, def id, Map content, Map params)
+void delete(service, def id, Map content, Map params)     .
 ```
 - may configure an 'adapter' Spring bean
 
