@@ -45,24 +45,13 @@ PURPOSE: To facilitate exposing RESTful endpoints that comply with the API strat
 
 
 
-###Singleton Controller
+###RESTful API Controller
 
 A single controller may be used to handle all API requests
 
 - dependent upon URL Mapping
 - supports 'nested resources'
-
-<br />
-
-Delegates to service based on naming conventions
-
-- Establishes a contract for services
-- may configure an adapter, may override service
 - resources use pluralized, hyphenated form
-
-```http
-        /course-sections/2351  -->  CourseSectionService
-```
 
 <br />
 
@@ -70,6 +59,48 @@ Configuration used to 'whitelist' exposed resources
 
 - may specify supported methods
 
+
+
+
+###RESTful API Controller (continued...)
+
+<br />
+
+Delegates to service based on naming conventions
+
+- may explicitly configure to override
+```http
+        /course-sections/2351  -->  CourseSectionService
+```
+- Establishes a contract for services
+```groovy
+def list( def service, Map params )
+def count( def service, Map params )
+def show( def service, Map params )
+def create( def service, Map content, Map params )
+def update( def service, def id, Map content, Map params )
+void delete( def service, def id, Map content, Map params )
+```
+- may configure an 'adapter' Spring bean
+
+
+
+
+###RESTful API Controller (continued...)
+
+Exception handling:
+
+-    OptimisticLockException
+-    Validation Exception
+-    UnsupportedRequestRepresentationException
+-    UnsupportedResponseRepresentationException
+-    ApplicationException
+-    AnyOtherException
+
+<br />
+
+'ApplicationException' gives responsiblility to services <br />
+(same contract as banner-core 'ApplicationException')
 
 
 
@@ -168,8 +199,94 @@ def result = Thing.executeQuery( query.statement, query.parameters,
 
 
 
-###Declarative Marshallers
+###Marshalling
 
+<br />
+
+* Leverages the grails converters and priority mechanism
+* Creates a unique named configuration for each resource/representation combination
+* Ultimate flexibility: can write custom marshallers
+
+
+
+
+###Declarative marshalling
+
+* For most cases, writing a custom marshaller shouldn't be needed
+* Can declare how to marshall a class in configuration
+* Supports
+    * including all fields except those excluded
+    * including only explicity listed fields
+    * renaming fields in the representation
+    * declaring additional fields to include in the representation, such as affordances
+    * declaring how to represent persistent associations
+
+
+
+
+###Example of declaring what fields to include
+```groovy
+        resource 'customers' config {
+            representation {
+                mediaTypes = ["application/json"]
+                marshallers {
+                    jsonDomainMarshaller {
+                        includesFields {
+                            field 'firstName'
+                            field 'lastName'
+                            field 'customerNo' name 'customerID'
+                        }
+                    }
+                }
+            }
+        }
+```
+```json
+{"id":74,"version":0,"firstName":"John","lastName":"Smith","customerID":"12345"}
+```
+
+
+
+
+###Declarative affordances
+
+* Can inject affordances or other computed fields into representations declaratively, in a re-usable fashion
+```groovy
+        jsonDomainMarshallerTemplates {
+            template 'domainAffordance' config {
+                additionalFields { map ->
+                    map['json'].property("_href",
+                        "/${map['resourceName']}/${map['resourceId']}" )
+                }
+            }
+        }
+```
+
+
+
+
+###Declarative affordances (continued...)
+```groovy
+resource 'customers' config {
+    representation {
+        mediaTypes = ["application/json"]
+        inherits = ['domainAffordance']
+        marshallers {
+            jsonDomainMarshaller {
+                includesFields {
+                    field 'firstName'
+                    field 'lastName'
+                    field 'customerNo' name 'customerID'
+                }
+            }
+        }
+    }
+}
+```
+```json
+{"id":74,"version":0,"firstName":"John","lastName":"Smith",
+ "customerID":"12345","_href":"/customers/74"}
+```
 
 
 
