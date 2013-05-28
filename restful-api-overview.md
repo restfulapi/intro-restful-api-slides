@@ -156,7 +156,7 @@ Will use:
 Response bodies contain
 
 - a single representation
-- an array or representations
+- an array of representations
 - an empty body
 
 <br />
