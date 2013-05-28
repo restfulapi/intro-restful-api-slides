@@ -118,7 +118,7 @@ in accordance with the strategy
 
 - HTTP Methods (GET, POST, PUT, DELETE, OPTIONS)
 - HTTP Status Codes
-- HTTP Headers
+- HTTP Headers (standard and custom)
 - Cache Headers (ETag, Last-Modified support)
 - CORS (Cross-Origin Resource Sharing) support
 
@@ -304,8 +304,8 @@ resource 'customers' config {
 Releases
 
 - 0.1.0 - current, used in Banner XE, OSD
-- 0.5.0 - June, broad production use encouraged
-- 0.6.0 - July, GitHub, Grails.org
+- 0.5.0 - July, broad production use encouraged
+- 0.6.0 - July/Aug, GitHub, Grails.org
 - 1.0.0 - anticipate end of year, based on feedback
 
 
