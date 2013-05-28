@@ -56,6 +56,8 @@ A single controller may be used to handle all API requests
 
 Delegates to service based on naming conventions
 
+- Establishes a contract for services
+- may configure an adapter, may override service
 - resources use pluralized, hyphenated form
 
 ```http
@@ -64,10 +66,10 @@ Delegates to service based on naming conventions
 
 <br />
 
-Establishes a contract for services
+Configuration used to 'whitelist' exposed resources
 
-- Allows use of a service adapter
-- Allows explicit mapping to a service (CoC)
+- may specify supported methods
+
 
 
 
@@ -194,12 +196,17 @@ Releases
 
 ###Grab it here
 
-Git Repo: ssh://git@devgit1/framework/plugins/restful-api.git
+Git Repo: <br />
+ssh://git@devgit1/framework/plugins/restful-api.git
 
-CI Server: [http://m037138.ellucian.com:8082]()
+CI Server: <br />
+[http://m037138.ellucian.com:8082]()
 
-README: []()
+README: <br />
+[http://m037138.ellucian.com:8082/job/restful-api-plugin/README.html]()
 
-Strategy: [http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report]()
+Strategy: <br />
+[http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report]()
 
-JIRA: [http://jirateams.ellucian.com:8080/login.jsp]()
+JIRA: <br />
+[http://jirateams.ellucian.com:8080/login.jsp]()
