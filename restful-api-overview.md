@@ -293,11 +293,27 @@ resource 'customers' config {
 
 
 
+###Testing
+
+- Significant test code
+ - 4288 lines test code
+ - 4022 lines plugin code
+
+- Written in Spock (BDD framework)
+
+<br />
+
+***Plugin includes abstract Spock spec class to streamline functional testing of REST APIs***
+
+
+
+
+
+
+
 ###Current Status
 
 - Production quality, feature incomplete
- - 4288 lines test code
- - 4022 lines plugin code
 
 <br />
 
