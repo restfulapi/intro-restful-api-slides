@@ -1,7 +1,178 @@
+# REST
 
-<br /><br />
+![rest](/rest-pic.png)
 
-### Restful API Plugin
+<br />
+
+
+<br />
+
+
+
+
+
+
+
+###"REpresentational State Transfer" (REST)
+First described by Roy Fielding (in his [dissertation](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm))
+
+Essentially describes the way the web works
+
+>REST is a set of principles that define how Web standards, such as HTTP and URIs, are supposed to be used (which often differs quite a bit from what many people actually do).[1](http://www.infoq.com/articles/rest-introduction)
+
+
+
+
+###It's the Web
+
+REST does **NOT** propose an alternative to the web
+
+- Remember SOAP?
+ - Uses only POST
+ - Uses it's own envelope
+ - Isn't (strictly) coupled to HTTP
+ - Has many WS-* standards (not 'Simple')
+
+<br />
+
+Using this soap should make you feel dirty
+
+<br />
+
+Remember CORBA? RMI?
+
+
+
+
+###Uses Standard HTTP Methods
+
+| HTTP action /URL      |    |   Meaning                |
+|:---------------------:|:--:|:------------------------:|
+| GET /things           | -> | Retrieve *list* of things |
+| GET /things/23        | -> | Retrieve *one* thing identified with 23 |
+| POST /things          | -> | Create a new thing |
+| PATCH /things/23      | -> | Replace thing 23 (or create thing 23) |
+| PUT /things/23        | -> | Update thing 23 (or create thing 23) |
+| DELETE /things/23     | -> | Delete thing 23 |
+
+
+
+
+
+###Uses Standard HTTP Status Codes
+| Status Code | Description |
+|:-----------:|:------------|
+| 200 | The request was successful. |
+| 201 | A resource was successfully created.|
+| 304 | ETag matches 'If-None-Match' header - not changed |
+| 400 | The request cannot be understood. |
+| 401 | Authentication failed, or not authorized. |
+| 404 | The requested resource could not be found. |
+| Etc... |
+
+
+
+
+###It's all about 'resources'
+
+>"A resource is anything that's important enough to be referenced as a thing in itself."
+Richardson and Ruby
+
+<br />
+
+- 'resource orientation'
+ - thinking about solutions in terms of resources
+ - may significantly influence internal design & architecture
+ - REST principles have been shown to reduce complexity
+- 'resources' often correspond to persistent domain objects
+ - but they don't have to...
+
+
+
+
+###And 'representations'
+
+- 'resources' are the concepts, or entities
+- 'representations' are how they are presented
+  - JSON and XML are most common
+  - other representations include iCal, PDF, etc.
+- a resource may have many representations
+
+<br />
+When manipulating a 'resource' through the standard REST actions, it is done by using a representation of the resource
+
+
+
+
+###Learning about REST
+
+Blogs and tutorials are everywhere...
+<br />
+such as the [Rest API Tutorial](http://www.restapitutorial.com)
+<br />
+<br />
+<br />
+So... how come nobody does it right?
+
+
+
+
+### REST fundamentals are not enough
+While REST is "easy", it doesn't answer everything...
+
+* How do I secure my API?
+* Should I use JSON?  Do I need an envelope?
+* What about versioning?  How?
+* Conditional requests?  CORS?
+
+<br />
+
+Most frameworks provide support that is naive
+
+- promote coupling to domain objects
+- don't support versioning
+
+
+
+
+
+
+
+###An API Strategy
+<br />
+We've captured best practices within an [API Strategy](http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report) document.
+_(This isn't our 'invention' but simply a gathering of best practices and insights from across the web.)_
+
+Provides additional guidance beyond the fundamentals
+
+- HTTP Status codes for various scenarios
+- Custom media types
+  - (e.g., 'application/vnd.hedtech.v2+json')
+- Versioning an API
+- Representations (JSON and XML)
+- Resources and nested resources
+- Paging and filtering lists
+
+
+
+
+
+
+
+###RESTful API Grails Plugin
+['restful-api'](http://m037138.ellucian.com:8082/job/restful-api-plugin/README.html) Grails Plugin
+
+- Realizes the [API Strategy](http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report)
+- Provides a 'controller' that exposes RESTful endpoints
+- Convention Over Configuration (CoC)
+  - Delegates to services based on a naming convention
+- Supports **versioning** (using custom media types)
+- **Declarative JSON marshalling** and **affordances**
+- CORS support
+- Conditional requests (ETag support)
+- Significant automated testing via Spock
+
+<br />
 
 
 
@@ -28,12 +199,12 @@
 
 ###Background
 <br />
-[Ellucian API Strategy]() approved January 2013
-
+[API Strategy]() used to guide development of this plugin.
+(Prepared by Charlie Hardt to gather best practices found across the web.)
 <br />
 
-'Core Architecture' team started development of 'restful-api' plugin end of January
-(developed by Shane & Charlie)
+Ellucian 'Core Architecture' team started development of 'restful-api' plugin end of January
+(Developed by Shane Riddell & Charlie Hardt)
 
 <br />
 
