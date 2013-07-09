@@ -2,6 +2,7 @@
 
 ![rest](/rest-pic.png)
 
+<small>www.perfmanhr.com/blog/wp-content/uploads/2011/09/rest-relaxation-reflection.gif</small>
 <br />
 
 
@@ -51,8 +52,8 @@ Remember CORBA? RMI?
 | GET /things           | -> | Retrieve *list* of things |
 | GET /things/23        | -> | Retrieve *one* thing identified with 23 |
 | POST /things          | -> | Create a new thing |
-| PATCH /things/23      | -> | Replace thing 23 (or create thing 23) |
-| PUT /things/23        | -> | Update thing 23 (or create thing 23) |
+| PATCH /things/23      | -> | Update thing 23 (or create thing 23) |
+| PUT /things/23        | -> | Replace thing 23 (or create thing 23) |
 | DELETE /things/23     | -> | Delete thing 23 |
 
 
@@ -68,7 +69,24 @@ Remember CORBA? RMI?
 | 400 | The request cannot be understood. |
 | 401 | Authentication failed, or not authorized. |
 | 404 | The requested resource could not be found. |
-| Etc... |
+| 405 | The method is not supported by the resource. |
+
+
+
+
+
+###Status Codes continued...
+| Status Code | Description |
+|:-----------:|:------------|
+| 406 | Not Acceptable. Accept header identifies an unsupported format. |
+| 409 | There is a conflict (that violates an optimistic lock). |
+| 412 | A precondition failed. Used for conditional requests. |
+| 415 | Unsupported Media Type. Client requested an unsupported format. |
+| 417 | Expectation Failed. |
+| 422 | 'Unprocessable' entity. |
+| 429 | The rate limit is exceeded |
+| 500 | An undisclosed server error occurred. This is a generic 'fail whale' response. |
+
 
 
 
@@ -271,7 +289,6 @@ Exception handling:
 <br />
 
 'ApplicationException' gives responsiblility to services <br />
-(same contract as banner-core 'ApplicationException')
 
 
 
@@ -321,6 +338,28 @@ Will use:
 
 
 
+###Filtering
+
+Filter lists with query parameters or within a POST body
+```
+?filter[0][field]=description&filter[1][value]=6322&
+filter[0][operator]=contains&filter[1][field]=thing&
+filter[1][operator]=eq&filter[0][value]=science&max=50
+```
+
+Helper class may be used to generate HQL <br />
+(but it is not a sophisticated query engine)
+```groovy
+def query = HQLBuilder.createHQL( application, params )
+def result = Thing.executeQuery( query.statement, query.parameters,
+                                 params )
+```
+'POST' queries should use a separate URI (e.g., '/qapi' vs. '/api')
+
+
+
+
+
 
 ###Responses
 
@@ -344,27 +383,6 @@ X-hedtech-totalCount   <-- paging
 X-hedtech-pageOffset
 X-hedtech-pageMaxSize
 ```
-
-
-
-
-###Responses (continued)
-
-Filtering lists via query params
-```
-?filter[0][field]=description&filter[1][value]=6322&
-filter[0][operator]=contains&filter[1][field]=thing&
-filter[1][operator]=eq&filter[0][value]=science&max=50
-```
-
-Helper class may be used to generate HQL <br />
-(but it is not a sophisticated query engine)
-```groovy
-def query = HQLBuilder.createHQL( application, params )
-def result = Thing.executeQuery( query.statement, query.parameters,
-                                 params )
-```
-
 
 
 
