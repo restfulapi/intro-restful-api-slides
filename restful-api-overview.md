@@ -185,7 +185,7 @@ Provides additional guidance beyond the fundamentals
 - Convention Over Configuration (CoC)
   - Delegates to services based on a naming convention
 - Supports **versioning** (using custom media types)
-- **Declarative JSON marshalling** and **affordances**
+- **Declarative marshalling** and **affordances**
 - CORS support
 - Conditional requests (ETag support)
 - Significant automated testing via Spock
@@ -244,7 +244,7 @@ A single controller may be used to handle all API requests
 
 <br />
 
-Configuration used to 'whitelist' exposed resources
+Configuration may be used to 'whitelist' exposed resources, or can dynamically expose all services
 
 - may specify supported methods
 
@@ -329,7 +329,7 @@ Will use:
 <br />
 
 - Media Types
- - Supports JSON and XML representations
+ - Supports JSON and XML representations, but can be extended to others (iCal)
  - Supports custom media types
  - Supports versioning through custom media types
 
@@ -388,13 +388,17 @@ X-hedtech-pageMaxSize
 
 
 
+
+
 ###Marshalling
 
 <br />
 
 * Leverages the grails converters and priority mechanism
 * Creates a unique named configuration for each resource/representation combination
-* Ultimate flexibility: can write custom marshallers
+* Ultimate flexibility
+    * can write custom marshallers
+    * can delegate to a custom marshalling service and use another framework (google-gson, JAXB, XMLBeans, etc)
 
 
 
@@ -431,7 +435,8 @@ X-hedtech-pageMaxSize
         }
 ```
 ```json
-{"id":74,"version":0,"firstName":"John","lastName":"Smith","customerID":"12345"}
+{"id":74,"version":0,"firstName":"John",
+ "lastName":"Smith","customerID":"12345"}
 ```
 
 
@@ -480,11 +485,131 @@ resource 'customers' config {
 
 
 
+###Declarative support for both domain and POGOs
+* jsonDomainMarshaller
+* jsonGroovyBeanMarshaller
+* xmlDomainMarshaller
+* xmlGroovyBeanMarshaller
+
+
+
+
+
+
+###Extraction
+Controller will delegate to a configured _extractor_ to process a request body into a map before passing it to a service.
+```groovy
+resource 'customers' config {
+    representation {
+        mediaTypes = ["application/json"]
+        extractor = new net.hedtech.restfulapi.CustomerExtractor()
+    }
+}
+```
+
+
+
+
+###Extraction (continued...)
+Three types of extractor interfaces available.  Each is responsible for returning a map of properties that the service will use to fulfill the request
+
+* JSONExtractor - passed a JSONObject parsed by grails JSON converter
+* XMLExtractor - passed a GPATHResult object parsed by grails XML converter
+* RequestExtractor - passed the http request directly
+
+
+
+
+###Extraction (continued...)
+Use the RequestExtractor to get access to the request body directly.  Used to support alternate data-binding frameworks (google-gson, JAXB, etc).
+
+
+
+
+###Declarative Extraction
+Can define rules in configuration to extract content from JSON and xml.
+
+* Rename properties
+* Provide default values
+* Convert 'shortObject' reference to id
+* 'Flatten' maps to be compatible with grails data-binding
+
+
+
+
+###Declarative Extraction (continued...)
+```groovy
+    resource 'purchase-orders' config {
+        representation {
+            mediaTypes = ["application/json"]
+            jsonExtractor {
+                property 'productId'      name 'productNumber'
+                property 'customers.name' name 'lastName'
+                property 'orderType'      defaultValue 'standard'
+            }
+        }
+    }
+````
+
+Applied to input
+```json
+    {
+        "productId":"123",
+        "quantity":50,
+        "customers":{
+            {"name":"Smith"},
+            {"name":"Jones"}
+        }
+    }
+```
+
+Results in the map
+```groovy
+['productNumber':'123', 'quantity':50, 'orderType':'standard',
+ customers':['lastName':'Smith'], ['lastName':'Jones'] ]
+```
+
+
+
+
+###Declarative Extraction - flattening maps
+```groovy
+    resource 'purchase-orders' config {
+        representation {
+            mediaTypes = ["application/json"]
+            jsonExtractor {
+                property 'customer' flatObject true
+            }
+        }
+    }
+```
+
+Applied to
+```json
+    {"orderId":123,
+     "customer": {
+        "name":"Smith"
+        "id":456,
+        "phone-number":"555-555-5555"
+     }
+    }
+```
+
+Will result in the map
+```groovy
+['orderId':123, 'customer.name':'Smith', 'customer.id':456,
+ 'customer.phone-number':'555-555-5555']
+```
+
+
+
+
 
 
 ###Testing
 
 - Significant test code
+ - 623 automated tests at time of 0.5.0 release
  - 4288 lines test code
  - 4022 lines plugin code
 
@@ -502,14 +627,14 @@ resource 'customers' config {
 
 ###Current Status
 
-- Production quality, feature incomplete
+- Production quality, 0.5.0 release July 12, 2013
 
 <br />
 
 Releases
 
-- 0.1.0 - current, used in Banner XE, OSD
-- 0.5.0 - July, broad production use encouraged
+- 0.1.0 - early-access, used in Banner XE
+- 0.5.0 - current, broad production use encouraged
 - 0.6.0 - July/Aug, GitHub, Grails.org
 - 1.0.0 - anticipate end of year, based on feedback
 
