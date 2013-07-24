@@ -610,6 +610,22 @@ resource 'purchase-orders' config {
 ###Custom marshalling service
 * Can mix marshalling frameworks in the same application - use grails converters for some objects, custom service(s) for others
 * A given representation must marshall all objects (and subobjects) using a single framework
+* Any bean implementing a marshalObject method can be used
+
+```groovy
+Object marshalObject(Object o, RepresentationConfig config)
+```
+
+
+
+
+###Custom marshalling service (continued...)
+* marshalObject can return any of the following:
+    * String
+    * byte[]
+    * InputStream
+    * StreamWrapper (used to convey both an InputStream and the value of the Content-Length header)
+* Allows for marshalling to binary representations (pdf, compression of large results downloaded as a file)
 
 
 
@@ -647,7 +663,6 @@ class CalendarService{
 
 ###Custom marshalling service - iCalendar example (continued...)
 ```groovy
-import net.hedtech.restfulapi.marshallers.MarshallingService
 import groovy.xml.MarkupBuilder
 import net.hedtech.restfulapi.config.RepresentationConfig
 
@@ -656,7 +671,7 @@ import net.hedtech.restfulapi.config.RepresentationConfig
  * In this case, we are using ical4j, so we only need to invoke
  * toString on the passed objects.
  */
-class ICalendarMarshallingService implements MarshallingService {
+class ICalendarMarshallingService {
 
     @Override
     String marshalObject(Object o, RepresentationConfig config) {
