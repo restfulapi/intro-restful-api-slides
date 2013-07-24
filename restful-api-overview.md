@@ -395,7 +395,6 @@ X-hedtech-pageMaxSize
 <br />
 
 * Leverages the grails converters and priority mechanism
-* Creates a unique named configuration for each resource/representation combination
 * Ultimate flexibility
     * can write custom marshallers
     * can delegate to a custom marshalling service and use another framework (google-gson, JAXB, XMLBeans, etc)
@@ -419,20 +418,20 @@ X-hedtech-pageMaxSize
 
 ###Example of declaring what fields to include
 ```groovy
-        resource 'customers' config {
-            representation {
-                mediaTypes = ["application/json"]
-                marshallers {
-                    jsonDomainMarshaller {
-                        includesFields {
-                            field 'firstName'
-                            field 'lastName'
-                            field 'customerNo' name 'customerID'
-                        }
-                    }
+resource 'customers' config {
+    representation {
+        mediaTypes = ["application/json"]
+        marshallers {
+            jsonDomainMarshaller {
+                includesFields {
+                    field 'firstName'
+                    field 'lastName'
+                    field 'customerNo' name 'customerID'
                 }
             }
         }
+    }
+}
 ```
 ```json
 {"id":74,"version":0,"firstName":"John",
@@ -444,7 +443,7 @@ X-hedtech-pageMaxSize
 
 ###Declarative affordances
 
-* Can inject affordances or other computed fields into representations declaratively, in a re-usable fashion
+* Can inject affordances or other computed fields into representations declaratively, in a re-usable fashion (using template)
 ```groovy
         jsonDomainMarshallerTemplates {
             template 'domainAffordance' config {
@@ -464,9 +463,9 @@ X-hedtech-pageMaxSize
 resource 'customers' config {
     representation {
         mediaTypes = ["application/json"]
-        inherits = ['domainAffordance']
         marshallers {
             jsonDomainMarshaller {
+                inherits = ['domainAffordance']
                 includesFields {
                     field 'firstName'
                     field 'lastName'
@@ -485,11 +484,126 @@ resource 'customers' config {
 
 
 
+###Deep vs Shallow Marshalling of associations
+* declarative domain marshallers support both deep or 'short-object' marshalling
+```groovy
+resource 'purchase-orders' config {
+    representation {
+        mediaTypes = ["application/json"]
+        marshallers {
+            jsonDomainMarshaller {
+                includesFields {
+                    field 'poNumber'
+                    field 'customer' deep false
+                }
+            }
+        }
+    }
+}```
+```json
+{"id":74,
+ "version":0,
+ "poNumber":12345,
+ "customer":"/customers/123"
+}```
+
+
+
+
+###Deep vs Shallow Marshalling (continued...)
+* declarative domain marshallers support both deep or 'short-object' marshalling
+```groovy
+resource 'purchase-orders' config {
+    representation {
+        mediaTypes = ["application/json"]
+        marshallers {
+            jsonDomainMarshaller {
+                supports PurchaseOrder
+                includesFields {
+                    field 'poNumber'
+                    field 'customer' deep true
+                }
+            }
+            jsonDomainMarshaller {
+                supports Customer
+                includesFields {
+                    field 'lastName'
+                    field 'firstName'
+                    field 'phone'
+                }
+            }
+        }
+    }
+}```
+```json
+{"id":74,
+ "version":0,
+ "poNumber":12345,
+ "customer": {
+        "lastName":"Smith"
+        "firstName":"John"
+        "phone":"555-555-5555"
+    }
+}```
+
+
+
+
+###Deep vs Shallow Marshalling (continued...)
+* default format for a 'short-object' can be changed in configuration
+* can apply to all representations via template inheritance
+
+
+
+
+###Reusing marshallers
+* Marshallers that need to be reused (such as a deep-marshalled sub-object) can be declarared in re-usable groups
+```groovy
+marshallerGroups {
+    group 'customer' marshallers {
+        jsonDomainMarshaller {
+            supports Customer
+            includesFields {
+                field 'lastName'
+                field 'firstName'
+                field 'phone'
+            }
+        }
+    }
+}```
+
+
+
+
+###Reusing marshallers (continued...)
+```groovy
+resource 'purchase-orders' config {
+    representation {
+        mediaTypes = ["application/json"]
+        marshallers {
+            jsonDomainMarshaller {
+                supports PurchaseOrder
+                includesFields {
+                    field 'poNumber'
+                    field 'customer' deep true
+                }
+            }
+            marshallerGroup 'customer'
+        }
+    }
+}```
+
+
+
+
+
 ###Declarative support for both domain and POGOs
 * jsonDomainMarshaller
 * jsonGroovyBeanMarshaller
 * xmlDomainMarshaller
 * xmlGroovyBeanMarshaller
+
+(Support for POJOs coming in the future, if needed.)
 
 
 
@@ -531,7 +645,7 @@ Can define rules in configuration to extract content from JSON and xml.
 
 * Rename properties
 * Provide default values
-* Convert 'shortObject' reference to id
+* Convert 'short-object' reference to id
 * 'Flatten' maps to be compatible with grails data-binding
 
 
@@ -556,23 +670,24 @@ Applied to input
     {
         "productId":"123",
         "quantity":50,
-        "customers":{
+        "customers":[
             {"name":"Smith"},
             {"name":"Jones"}
-        }
+        ]
     }
 ```
 
 Results in the map
 ```groovy
 ['productNumber':'123', 'quantity':50, 'orderType':'standard',
- customers':['lastName':'Smith'], ['lastName':'Jones'] ]
+ customers':[['lastName':'Smith'], ['lastName':'Jones'] ]
 ```
 
 
 
 
 ###Declarative Extraction - flattening maps
+Can flatten maps for compatibility with grails data binding
 ```groovy
     resource 'purchase-orders' config {
         representation {
@@ -657,3 +772,6 @@ Strategy: <br />
 
 JIRA: <br />
 [http://jirateams.ellucian.com:8080/login.jsp]()
+
+iCalendar example: <br />
+[http://m037138.ellucian.com:8082/job/restful-api-plugin/HOWTO-iCalendar.html]()
