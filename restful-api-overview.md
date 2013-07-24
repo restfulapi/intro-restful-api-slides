@@ -525,6 +525,7 @@ resource 'purchase-orders' config {
             }
             jsonDomainMarshaller {
                 supports Customer
+                includesVersion false
                 includesFields {
                     field 'lastName'
                     field 'firstName'
@@ -539,6 +540,7 @@ resource 'purchase-orders' config {
  "version":0,
  "poNumber":12345,
  "customer": {
+        "id":123
         "lastName":"Smith"
         "firstName":"John"
         "phone":"555-555-5555"
@@ -840,6 +842,7 @@ Will result in the map
 ```groovy
 ['orderId':123, 'customer.name':'Smith', 'customer.id':456,
  'customer.phone-number':'555-555-5555']
+ ```
 
 
 
