@@ -511,7 +511,6 @@ resource 'purchase-orders' config {
 
 
 ###Deep vs Shallow Marshalling (continued...)
-* declarative domain marshallers support both deep or 'short-object' marshalling
 ```groovy
 resource 'purchase-orders' config {
     representation {
@@ -604,6 +603,118 @@ resource 'purchase-orders' config {
 * xmlGroovyBeanMarshaller
 
 (Support for POJOs coming in the future, if needed.)
+
+
+
+
+###Custom marshalling service
+* Can mix marshalling frameworks in the same application - use grails converters for some objects, custom service(s) for others
+* A given representation must marshall all objects (and subobjects) using a single framework
+
+
+
+
+###Custom marshalling service - iCalendar example
+Use ical4j library to create and marshall calendars
+```groovy
+import net.fortuna.ical4j.model.*
+import net.fortuna.ical4j.model.property.*
+class CalendarService{
+    def show( Map params ) {
+        def builder = new ContentBuilder()
+        def calendar = builder.calendar() {
+            prodid('-//John Smith//iCal4j 1.0//EN')
+            version('2.0')
+            vevent() {
+                uid('1')
+                dtstamp(new DtStamp())
+                dtstart('20090810', parameters: parameters() {
+                    value('DATE')})
+                action('DISPLAY')
+                attach('http://example.com/attachment', parameters: parameters() {
+                    value('URI')})
+            }
+        }
+        calendar.validate()
+
+        calendar
+    }
+}
+```
+
+
+
+
+###Custom marshalling service - iCalendar example (continued...)
+```groovy
+import net.hedtech.restfulapi.marshallers.MarshallingService
+import groovy.xml.MarkupBuilder
+import net.hedtech.restfulapi.config.RepresentationConfig
+
+/**
+ * A demonstration class for custom marshalling of iCalendar objects.
+ * In this case, we are using ical4j, so we only need to invoke
+ * toString on the passed objects.
+ */
+class ICalendarMarshallingService implements MarshallingService {
+
+    @Override
+    String marshalObject(Object o, RepresentationConfig config) {
+        if (!(o instanceof net.fortuna.ical4j.model.Calendar)) {
+            throw new Exception("Cannot marshal instances of" + o.getClass().getName())
+        }
+        return o.toString()
+    }
+}```
+
+
+
+
+
+###Custom marshalling service - iCalendar example (continued...)
+Define the calendar resource and representation using the custom marshalling service
+```groovy
+resource 'calendars' config {
+    methods = ['show']
+    representation {
+        mediaTypes = ['text/calendar']
+        contentType = 'text/calendar'
+        marshallerFramework = 'ICalendarMarshallingService'
+    }
+}
+```
+
+
+
+
+###Custom marshalling service - iCalendar example (continued...)
+```
+curl -i --noproxy localhost -H "Accept: text/calendar" http://localhost:8080/test-restful-api/api/calendars/1
+```
+
+```
+HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+ETag: c44e6bb0-703f-4b39-9f5c-627aedbebc71
+Last-Modified: Wed, 24 Jul 2013 15:04:32 GMT
+X-hedtech-Media-Type: text/calendar
+X-hedtech-message: Details for the calendar resource
+Content-Type: text/calendar;charset=utf-8
+Transfer-Encoding: chunked
+Date: Wed, 24 Jul 2013 15:04:32 GMT
+
+BEGIN:VCALENDAR
+PRODID:-//John Smith//iCal4j 1.0//EN
+VERSION:2.0
+BEGIN:VEVENT
+UID:1
+DTSTAMP:20130724T150432Z
+DTSTART;VALUE=DATE:20090810
+ACTION:DISPLAY
+ATTACH;VALUE=URI:http://example.com/attachment
+END:VEVENT
+END:VCALENDAR
+```
 
 
 
@@ -714,7 +825,7 @@ Will result in the map
 ```groovy
 ['orderId':123, 'customer.name':'Smith', 'customer.id':456,
  'customer.phone-number':'555-555-5555']
-```
+
 
 
 
