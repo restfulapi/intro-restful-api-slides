@@ -4,10 +4,13 @@
 
 <small>www.perfmanhr.com/blog/wp-content/uploads/2011/09/rest-relaxation-reflection.gif</small>
 <br />
-
-
 <br />
-
+<br />
+```
+Hint: Navigate 'down' to explore current topic,
+      Navigate 'right' for next topic
+      You may use your arrow keys...
+```
 
 
 
@@ -156,16 +159,15 @@ Most frameworks provide support that is naive
 
 
 
-###An API Strategy
+###Our API Strategy
 <br />
-We've captured best practices within an [API Strategy](http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report) document.
-_(This isn't our 'invention' but simply a gathering of best practices and insights from across the web.)_
+We've captured best practices within an [API Strategy](http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report) document.<br />
+<small>_(This isn't our 'invention' but simply a gathering of best practices and insights from across the web.)_</small>
 
 Provides additional guidance beyond the fundamentals
 
 - HTTP Status codes for various scenarios
-- Custom media types
-  - (e.g., 'application/vnd.hedtech.v2+json')
+- Standard and Custom media types
 - Versioning an API
 - Representations (JSON and XML)
 - Resources and nested resources
@@ -180,33 +182,22 @@ Provides additional guidance beyond the fundamentals
 ###RESTful API Grails Plugin
 ['restful-api'](http://m037138.ellucian.com:8082/job/restful-api-plugin/README.html) Grails Plugin
 
-- Realizes the [API Strategy](http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report)
-- Provides a 'controller' that exposes RESTful endpoints
-- Convention Over Configuration (CoC)
-  - Delegates to services based on a naming convention
-- Supports **versioning** (using custom media types)
-- **Declarative marshalling** and **affordances**
-- CORS support
-- Conditional requests (ETag support)
-- Significant automated testing via Spock
-
 <br />
 
+<large>To facilitate development of<br />
+**non-trivial,** versioned <br />
+APIs in accordance with our <br />
+[API Strategy](http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report)</large>
 
 
 
 
+ ### Overview Topics
 
-<br />
-
-- Background
-
-- Key Features
- - Controller
- - HTTP
- - Content Negotiation
- - Declarative Marshallers
-
+- Exposing a Resource
+- Processing a Request
+- Responding
+- Testing
 - Current Status
 
 
@@ -214,156 +205,384 @@ Provides additional guidance beyond the fundamentals
 
 
 
-
-###Background
 <br />
-[API Strategy]() used to guide development of this plugin.
-(Prepared by Charlie Hardt to gather best practices found across the web.)
 <br />
-
-Ellucian 'Core Architecture' team started development of 'restful-api' plugin end of January
-(Developed by Shane Riddell & Charlie Hardt)
-
-<br />
-
-PURPOSE: To facilitate exposing RESTful endpoints that comply with the API strategy, within Grails projects like Banner XE
+###Exposing a Resource
 
 
 
 
-
-
-
-###RESTful API Controller
+###Routing Requests
 
 A single controller may be used to handle all API requests
 
-- dependent upon URL Mapping
-- supports 'nested resources'
-- resources use pluralized, hyphenated form
-
-<br />
-
-Configuration may be used to 'whitelist' exposed resources, or can dynamically expose all services
-
-- may specify supported methods
-
-
-
-
-###RESTful API Controller (continued...)
-
-<br />
-
-Delegates to service based on naming conventions
-
-- may explicitly configure to override
-```http
-    /course-sections/2351  -->  CourseSectionService
-```
-- Establishes a contract for services
 ```groovy
-def list(service, Map params)
-def count(service, Map params)
-def show(service, Map params)
-def create(service, Map content, Map params)
-def update(service, def id, Map content, Map params)
-void delete(service, def id, Map content, Map params)     .
+class UrlMappings {
+  static mappings = {
+    "/api/$pluralizedResourceName/$id"(controller:'restfulApi') {
+        action = [GET: "show", PUT: "update", DELETE: "delete"]
+        parseRequest = false
+    }
+    "/api/$pluralizedResourceName"(controller:'restfulApi') {
+        action = [GET: "list", POST: "create"]
+        parseRequest = false
+    }
 ```
-- may configure an 'adapter' Spring bean
 
 
 
 
-###RESTful API Controller (continued...)
+###Routing Requests
 
-Exception handling:
+We explicitly support one level of nesting
 
--    OptimisticLockException
--    Validation Exception
--    UnsupportedRequestRepresentationException
--    UnsupportedResponseRepresentationException
--    ApplicationException
--    AnyOtherException
+```groovy
+class UrlMappings {
+  static mappings = {
+    "/api/$parentPluralizedResourceName/$parentId/$pluralizedResourceName/$id"(controller:'restfulApi') {
+      action = [GET: "show", PUT: "update", DELETE: "delete"]
+      parseRequest = false
+    }
+
+    "/api/$parentPluralizedResourceName/$parentId/$pluralizedResourceName"(controller:'restfulApi') {
+      action = [GET: "list", POST: "create"]
+      parseRequest = false
+    }
+```
+
+
+
+
+###Routing Requests
+
+And if you need to query you can also use POST<br />
+_(useful for complex queries or when criteria is private data)_
+
+```groovy
+class UrlMappings {
+  static mappings = {
+    "/qapi/$pluralizedResourceName"(controller:'restfulApi') {
+      action = [GET: "list", POST: "list"]
+      parseRequest = false
+    }
+```
+
+
+
+
+###Whitelisting Resources
+
+Configuration may be used to 'whitelist' exposed resources
+
+```groovy
+resource 'things' config {
+    representation {
+        mediaTypes = ['application/vnd.hedtech.v1+json',
+                      'application/json']
+        marshallerFramework = 'json'
+        marshallers {
+            jsonDomainMarshaller {
+                priority = 100
+            }
+        }
+        jsonExtractor {}
+    }
+}
+```
+
+
+
+
+###Dynamically Exposing Resources
+
+...or you can dynamically expose all services
+
+```groovy
+anyResource {
+    representation {
+        mediaTypes = ["application/json"]
+        marshallers {
+            jsonDomainMarshaller {
+                priority = 101
+            }
+            jsonGroovyBeanMarshaller {
+                priority = 100
+            }
+        }
+        jsonExtractor {}
+    }
+}
+```
+
+
+
+
+
+
+<br />
+<br />
+
+### Processing a Request
+
+
+
+
+###Leveraging HTTP
 
 <br />
 
-'ApplicationException' gives responsiblility to services <br />
-
-
-
-
-
-
-###HTTP
-
-<br />
-
-Proper, consistent HTTP support <br />
+The plugin ensures proper, consistent HTTP support <br />
 in accordance with the strategy
 
 <br />
 
-- HTTP Methods (GET, POST, PUT, DELETE, OPTIONS)
-- HTTP Status Codes
-- HTTP Headers (standard and custom)
-- Cache Headers (ETag, Last-Modified support)
-- CORS (Cross-Origin Resource Sharing) support
-
-
+- Support 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS' HTTP Methods
+ - Note: Currently, 'PUT' support employs 'PATCH' semantics
+- Use standard HTTP Headers
+- Support conditional requests
+- Support CORS (Cross-Origin Resource Sharing)
 
 
 
 
 ###Content Negotiation
 
+Parse request body based on 'Content-Type' header
+
+Respond with format identified in 'Accept' header
+
 Given:
+
 ```http
         application/xml;q=0.9,application/vnd.hedtech.v0+xml;q=1.0
 ```
+
 Will use:
+
 ```
         application/vnd.hedtech.v0+xml
 ```
 
 <br />
 
-- Media Types
- - Supports JSON and XML representations, but can be extended to others (iCal)
- - Supports custom media types
- - Supports versioning through custom media types
+- Media Type Support
+ - Built-in support for JSON and XML representations
+ - Can add support for others (iCal, PDF)
+ - Versioning is supported through custom media types
+
+
+
+
+###Content Extraction
+
+Controller will delegate to a configured _extractor_ to process a request body into a map before passing it to a service.
+
+```groovy
+ resource 'customers' config {
+     representation {
+         mediaTypes = ["application/json"]
+         extractor = new net.hedtech.restfulapi.CustomerExtractor()
+     }
+ }
+```
+
+
+
+
+###Content Extraction (continued...)
+Three types of extractor interfaces available.  Each is responsible for returning a map of properties that the service will use to fulfill the request
+
+* JSONExtractor - passed a JSONObject parsed by grails JSON converter
+* XMLExtractor - passed a GPATHResult object parsed by grails XML converter
+* RequestExtractor - passed the http request directly
+
+<br />
+
+Use the RequestExtractor to get access to the request body directly.  Used to support alternate data-binding frameworks (google-gson, JAXB, etc).
+
+
+
+
+###Declarative Extraction
+Can define rules in configuration to extract content from JSON and xml.
+
+* Rename properties
+* Provide default values
+* Convert 'short-object' reference to id
+* 'Flatten' maps to be compatible with grails data-binding
+
+
+
+
+###Declarative Extraction (continued...)
+```groovy
+    resource 'purchase-orders' config {
+        representation {
+            mediaTypes = ["application/json"]
+            jsonExtractor {
+                property 'productId'      name 'productNumber'
+                property 'customers.name' name 'lastName'
+                property 'orderType'      defaultValue 'standard'
+            }
+        }
+    }
+````
+
+Applied to input
+```json
+    {
+        "productId":"123",
+        "quantity":50,
+        "customers":[
+            {"name":"Smith"},
+            {"name":"Jones"}
+        ]
+    }
+```
+
+Results in the map
+```groovy
+['productNumber':'123', 'quantity':50, 'orderType':'standard',
+ customers':[['lastName':'Smith'], ['lastName':'Jones'] ]
+```
+
+
+
+
+###Declarative Extraction - flattening maps
+Can flatten maps for compatibility with grails data binding
+```groovy
+    resource 'purchase-orders' config {
+        representation {
+            mediaTypes = ["application/json"]
+            jsonExtractor {
+                property 'customer' flatObject true
+            }
+        }
+    }
+```
+
+Applied to
+```json
+    {"orderId":123,
+     "customer": {
+        "name":"Smith"
+        "id":456,
+        "phone-number":"555-555-5555"
+     }
+    }
+```
+
+Will result in the map
+```groovy
+['orderId':123, 'customer.name':'Smith', 'customer.id':456,
+ 'customer.phone-number':'555-555-5555']
+ ```
+
+
+
+
+###Delegating to a Service
+
+<br />
+
+The controller delegates to a service based on naming conventions (or configuration)
+
+```http
+    /course-sections/2351  -->  CourseSectionService
+```
+
+<br />
+
+Establishes a contract for services
+
+```groovy
+def list(Map params)
+def count(Map params)
+def show(Map params)
+def create(Map content, Map params)
+def update(def id, Map content, Map params)
+void delete(def id, Map content, Map params)
+```
+
+<small>_(but you may configure a 'ServiceAdapter' Spring bean to adapt the contract)_</small>
 
 
 
 
 
+###Filtering Lists
 
-###Filtering
-
-Filter lists with query parameters or within a POST body
+Filter lists using query parameters or within a POST body
 ```
 ?filter[0][field]=description&filter[1][value]=6322&
 filter[0][operator]=contains&filter[1][field]=thing&
 filter[1][operator]=eq&filter[0][value]=science&max=50
 ```
 
-Helper class may be used to generate HQL <br />
+Helper class may be used within your service to generate HQL <br />
 (but it is not a sophisticated query engine)
 ```groovy
 def query = HQLBuilder.createHQL( application, params )
 def result = Thing.executeQuery( query.statement, query.parameters,
                                  params )
 ```
-'POST' queries should use a separate URI (e.g., '/qapi' vs. '/api')
+'POST' queries should use a separate URI <br />
+(e.g., '/qapi' vs. '/api')
+
+
+
+
+###Handling Exceptions
+
+Built-in exception handling for:
+
+-    OptimisticLockException
+-    Validation Exception
+-    UnsupportedResourceException
+-    UnsupportedRequestRepresentationException
+-    UnsupportedResponseRepresentationException
+-    ApplicationException\*
+-    AnyOtherException
+
+<br />
+
+\*'ApplicationException' allows your services to specify how an exception should be handled.
 
 
 
 
 
 
-###Responses
+<br />
+<br />
 
-Response bodies contain
+### Responding
+
+
+
+
+###Leveraging HTTP
+
+<br />
+
+The plugin ensures proper, consistent HTTP support <br />
+in accordance with the strategy
+
+<br />
+
+- Return proper HTTP Status Codes
+- Use standard and custom HTTP Headers
+ - 'Content-Type' specifies standard media type (to allow tools, browsers to render result)
+ - A custom header (e.g., 'X-hedtech-Media-Type') identifies actual media type of response
+- Include Cache Headers (ETag, Last-Modified)
+
+
+
+
+###The Response Body
+
+Response bodies contain either:
 
 - a single representation
 - an array of representations
@@ -371,7 +590,7 @@ Response bodies contain
 
 <br />
 
-Envelope information contained in headers
+'Envelope' information is contained in headers
 ```http
 Content-Type
 X-hedtech-Media-Type   <-- the 'actual' content type
@@ -383,9 +602,6 @@ X-hedtech-totalCount   <-- paging
 X-hedtech-pageOffset
 X-hedtech-pageMaxSize
 ```
-
-
-
 
 
 
@@ -738,117 +954,6 @@ END:VCALENDAR
 
 
 
-###Extraction
-Controller will delegate to a configured _extractor_ to process a request body into a map before passing it to a service.
-```groovy
-resource 'customers' config {
-    representation {
-        mediaTypes = ["application/json"]
-        extractor = new net.hedtech.restfulapi.CustomerExtractor()
-    }
-}
-```
-
-
-
-
-###Extraction (continued...)
-Three types of extractor interfaces available.  Each is responsible for returning a map of properties that the service will use to fulfill the request
-
-* JSONExtractor - passed a JSONObject parsed by grails JSON converter
-* XMLExtractor - passed a GPATHResult object parsed by grails XML converter
-* RequestExtractor - passed the http request directly
-
-
-
-
-###Extraction (continued...)
-Use the RequestExtractor to get access to the request body directly.  Used to support alternate data-binding frameworks (google-gson, JAXB, etc).
-
-
-
-
-###Declarative Extraction
-Can define rules in configuration to extract content from JSON and xml.
-
-* Rename properties
-* Provide default values
-* Convert 'short-object' reference to id
-* 'Flatten' maps to be compatible with grails data-binding
-
-
-
-
-###Declarative Extraction (continued...)
-```groovy
-    resource 'purchase-orders' config {
-        representation {
-            mediaTypes = ["application/json"]
-            jsonExtractor {
-                property 'productId'      name 'productNumber'
-                property 'customers.name' name 'lastName'
-                property 'orderType'      defaultValue 'standard'
-            }
-        }
-    }
-````
-
-Applied to input
-```json
-    {
-        "productId":"123",
-        "quantity":50,
-        "customers":[
-            {"name":"Smith"},
-            {"name":"Jones"}
-        ]
-    }
-```
-
-Results in the map
-```groovy
-['productNumber':'123', 'quantity':50, 'orderType':'standard',
- customers':[['lastName':'Smith'], ['lastName':'Jones'] ]
-```
-
-
-
-
-###Declarative Extraction - flattening maps
-Can flatten maps for compatibility with grails data binding
-```groovy
-    resource 'purchase-orders' config {
-        representation {
-            mediaTypes = ["application/json"]
-            jsonExtractor {
-                property 'customer' flatObject true
-            }
-        }
-    }
-```
-
-Applied to
-```json
-    {"orderId":123,
-     "customer": {
-        "name":"Smith"
-        "id":456,
-        "phone-number":"555-555-5555"
-     }
-    }
-```
-
-Will result in the map
-```groovy
-['orderId':123, 'customer.name':'Smith', 'customer.id':456,
- 'customer.phone-number':'555-555-5555']
- ```
-
-
-
-
-
-
 
 ###Testing
 
@@ -879,7 +984,7 @@ Releases
 
 - 0.1.0 - early-access, used in Banner XE
 - 0.5.0 - current, broad production use encouraged
-- 0.6.0 - July/Aug, GitHub, Grails.org
+- 0.6.0 - targeted for Aug, GitHub, Grails.org
 - 1.0.0 - anticipate end of year, based on feedback
 
 
