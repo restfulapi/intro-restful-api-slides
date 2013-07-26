@@ -1,6 +1,6 @@
 ### Introducing the RESTful API Grails Plugin
 
-![rest](/rest-pic.png)
+![rest](rest-pic.png)
 
 <small>www.perfmanhr.com/blog/wp-content/uploads/2011/09/rest-relaxation-reflection.gif</small>
 <br />
