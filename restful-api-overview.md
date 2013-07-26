@@ -1,9 +1,8 @@
-# REST
+### Introducing the RESTful API Grails Plugin
 
 ![rest](/rest-pic.png)
 
 <small>www.perfmanhr.com/blog/wp-content/uploads/2011/09/rest-relaxation-reflection.gif</small>
-<br />
 <br />
 <br />
 ```
@@ -20,30 +19,37 @@ Hint: Navigate 'down' to explore current topic,
 ###"REpresentational State Transfer" (REST)
 First described by Roy Fielding (in his [dissertation](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm))
 
+<br />
+
 Essentially describes the way the web works
 
 >REST is a set of principles that define how Web standards, such as HTTP and URIs, are supposed to be used (which often differs quite a bit from what many people actually do).[1](http://www.infoq.com/articles/rest-introduction)
 
+<br /><br />
+
+```
+Navigate 'down' for some background on REST, or 'right' to continue
+```
 
 
 
-###It's the Web
 
-REST does **NOT** propose an alternative to the web
+### REST is "Simple"
+<br />
 
-- Remember SOAP?
- - Uses only POST
- - Uses it's own envelope
- - Isn't (strictly) coupled to HTTP
- - Has many WS-* standards (not 'Simple')
+REST does **NOT** propose an alternative to the web</br >
+_(like SOAP/WS-\*, CORBA, RMI)_
 
 <br />
 
-Using this soap should make you feel dirty
+REST provides a common and consistent interface based on proper use of HTTP
 
-<br />
+<br /><br />
 
-Remember CORBA? RMI?
+```
+Navigate 'down' for more info on REST, or 'right' to continue
+```
+
 
 
 
@@ -68,6 +74,7 @@ Remember CORBA? RMI?
 |:-----------:|:------------|
 | 200 | The request was successful. |
 | 201 | A resource was successfully created.|
+| 202 | Request has been received. |
 | 304 | ETag matches 'If-None-Match' header - not changed |
 | 400 | The request cannot be understood. |
 | 401 | Authentication failed, or not authorized. |
@@ -148,7 +155,7 @@ While REST is "easy", it doesn't answer everything...
 
 <br />
 
-Most frameworks provide support that is naive
+Many frameworks provide support that is naive
 
 - promote coupling to domain objects
 - don't support versioning
@@ -192,6 +199,8 @@ APIs in accordance with our <br />
 
 
 
+
+
  ### Overview Topics
 
 - Exposing a Resource
@@ -218,7 +227,11 @@ A single controller may be used to handle all API requests
 
 ```groovy
 class UrlMappings {
+
   static mappings = {
+
+    // Normal REST mappings
+
     "/api/$pluralizedResourceName/$id"(controller:'restfulApi') {
         action = [GET: "show", PUT: "update", DELETE: "delete"]
         parseRequest = false
@@ -234,11 +247,15 @@ class UrlMappings {
 
 ###Routing Requests
 
-We explicitly support one level of nesting
+We recommend explicit support for **one** level of nesting
 
 ```groovy
 class UrlMappings {
+
   static mappings = {
+
+    // Also add mappings to support nesting resources one-level
+
     "/api/$parentPluralizedResourceName/$parentId/$pluralizedResourceName/$id"(controller:'restfulApi') {
       action = [GET: "show", PUT: "update", DELETE: "delete"]
       parseRequest = false
@@ -260,7 +277,12 @@ _(useful for complex queries or when criteria is private data)_
 
 ```groovy
 class UrlMappings {
+
   static mappings = {
+
+    // Using a different URL prefix, we'll add a mapping to
+    // support querying using POST
+
     "/qapi/$pluralizedResourceName"(controller:'restfulApi') {
       action = [GET: "list", POST: "list"]
       parseRequest = false
