@@ -201,7 +201,17 @@ APIs in accordance with our <br />
 
 
 
- ### Overview Topics
+
+### Overview
+
+![overview-diagram](restful-api_marketecture.png)
+
+
+
+
+
+
+### Overview Topics
 
 - Exposing a Resource
 - Processing a Request
