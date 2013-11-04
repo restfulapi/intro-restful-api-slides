@@ -174,7 +174,7 @@ Many frameworks provide support that is naive
 
 ###Our API Strategy
 <br />
-We've captured best practices within an [API Strategy](http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report) document.<br />
+We've captured best practices within an [API Strategy](https://github.com/restfulapi/api-strategy) document.<br />
 <small>_(This isn't our 'invention' but simply a gathering of best practices and insights from across the web.)_</small>
 
 Provides additional guidance beyond the fundamentals
@@ -193,7 +193,7 @@ Provides additional guidance beyond the fundamentals
 
 
 ###RESTful API Grails Plugin
-['restful-api'](http://m037138.ellucian.com:8082/job/restful-api-plugin/README.html) Grails Plugin
+['restful-api'](https://github.com/restfulapi/restful-api) Grails Plugin
 
 <br />
 
