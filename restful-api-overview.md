@@ -61,10 +61,16 @@ Navigate 'down' for more info on REST, or 'right' to continue
 | GET /things           | -> | Retrieve *list* of things |
 | GET /things/23        | -> | Retrieve *one* thing identified with 23 |
 | POST /things          | -> | Create a new thing |
-| PATCH /things/23      | -> | Update thing 23 (or create thing 23) |
-| PUT /things/23        | -> | Replace thing 23 (or create thing 23) |
+| PATCH /things/23      | -> | Update thing 23 |
+| PUT /things/23        | -> | Replace thing 23 (or create thing 23)\* |
 | DELETE /things/23     | -> | Delete thing 23 |
 
+<br />
+
+\*Notes: 
+
+* PUT is often used with PATCH semantics. 
+* PUT can create a thing if it has a pre-assigned id.
 
 
 
