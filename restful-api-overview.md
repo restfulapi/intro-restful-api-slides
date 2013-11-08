@@ -23,7 +23,7 @@ First described by Roy Fielding (in his [dissertation](http://www.ics.uci.edu/~f
 
 Essentially describes the way the web works
 
->REST is a set of principles that define how Web standards, such as HTTP and URIs, are supposed to be used (which often differs quite a bit from what many people actually do).[1](http://www.infoq.com/articles/rest-introduction)
+>REST is a set of principles that define how Web standards, such as HTTP and URIs, are supposed to be used (which often differs quite a bit from what many people actually do).</br><small>Stefan-Tilkov [(post)](http://www.infoq.com/articles/rest-introduction)</small>
 
 <br /><br />
 
@@ -146,7 +146,7 @@ such as the [Rest API Tutorial](http://www.restapitutorial.com)
 <br />
 <br />
 <br />
-So... how come nobody does it right?
+So... how come so many APIs aren't right?
 
 
 
@@ -1014,16 +1014,9 @@ END:VCALENDAR
 
 ###Current Status
 
-- Production quality, 0.5.0 release July 12, 2013
+- Production quality, 0.8.0 release (4 Nov 2013)
 
 <br />
-
-Releases
-
-- 0.1.0 - early-access, used in Banner XE
-- 0.5.0 - current, broad production use encouraged
-- 0.6.0 - targeted for Aug, GitHub, Grails.org
-- 1.0.0 - anticipate end of year, based on feedback
 
 
 
@@ -1031,19 +1024,18 @@ Releases
 ###Grab it here
 
 Git Repo: <br />
-ssh://git@devgit1/framework/plugins/restful-api.git
+<small>https://github.com/restfulapi/restful-api </br></small>
+<small>(git clone https://github.com/restfulapi/restful-api.git)</small>
 
 CI Server: <br />
-[http://m037138.ellucian.com:8082]()
+<small>(Currently using Jenkins within Ellucian; we'll try to move this soon)</small>
 
 README: <br />
-[http://m037138.ellucian.com:8082/job/restful-api-plugin/README.html]()
+<small>[https://github.com/restfulapi/restful-api/blob/master/README.md]()</small>
 
 Strategy: <br />
-[http://m037138.ellucian.com:8082/job/Ellucian%20API%20Strategy%20Documentation/HTML_Report]()
+<small>[https://github.com/restfulapi/api-strategy/blob/master/README.md]()</small>
 
 JIRA: <br />
-[http://jirateams.ellucian.com:8080/login.jsp]()
+<small>(Currently using JIRA within Ellucian)</small>
 
-iCalendar example: <br />
-[http://m037138.ellucian.com:8082/job/restful-api-plugin/HOWTO-iCalendar.html]()
